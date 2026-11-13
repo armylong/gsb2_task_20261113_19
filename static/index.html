@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HAR 本地脱敏工具</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">🛡️ HAR 本地脱敏工具 <span class="local-tag">仅本机 · 不外传</span></div>
+    <div class="actions">
+      <label class="btn primary">
+        上传 HAR
+        <input type="file" id="file-input" accept=".har,application/json" hidden />
+      </label>
+      <button class="btn" id="btn-demo">载入演示数据</button>
+      <button class="btn" id="btn-demo-download">下载演示 HAR</button>
+      <button class="btn danger" id="btn-clear">清空</button>
+      <button class="btn success" id="btn-export-har" disabled>导出脱敏 HAR</button>
+      <button class="btn success" id="btn-export-summary" disabled>下载脱敏摘要</button>
+    </div>
+  </header>
+
+  <div id="banner" class="banner hidden"></div>
+  <div id="toast" class="toast hidden"></div>
+
+  <main class="layout">
+    <!-- 左:请求列表 -->
+    <section class="panel entries-panel">
+      <div class="panel-head">
+        <strong>请求列表</strong>
+        <span id="entry-count" class="muted"></span>
+      </div>
+      <input type="search" id="keyword" placeholder="按方法 / 地址 / 状态码关键词筛选" />
+      <ul id="entry-list" class="entry-list"></ul>
+    </section>
+
+    <!-- 中:请求详情 -->
+    <section class="panel detail-panel">
+      <div id="detail-empty" class="empty-hint">上传或选择左侧请求后在此查看详情</div>
+      <div id="detail" class="hidden">
+        <div class="panel-head">
+          <strong id="d-title"></strong>
+          <div>
+            <button class="btn small" id="btn-toggle-preview">切换到脱敏预览</button>
+          </div>
+        </div>
+        <div id="detail-body"></div>
+      </div>
+    </section>
+
+    <!-- 右:发现项与规则 -->
+    <section class="panel side-panel">
+      <div class="tabs">
+        <button class="tab active" data-tab="findings">发现项 <span id="finding-count-badge"></span></button>
+        <button class="tab" data-tab="rules">规则</button>
+      </div>
+
+      <div id="tab-findings" class="tab-pane">
+        <div class="bulk-bar">
+          <label>批量处理:</label>
+          <select id="bulk-treatment">
+            <option value="mask">固定遮盖</option>
+            <option value="delete">删除字段</option>
+            <option value="pseudo">一致化代号</option>
+          </select>
+          <button class="btn small" id="btn-bulk-apply">应用到全部</button>
+          <button class="btn small" id="btn-bulk-mark">全部标记已确认</button>
+        </div>
+        <ul id="finding-list" class="finding-list"></ul>
+        <h4 class="unchecked-title">未检查内容(不代表安全)</h4>
+        <ul id="unchecked-list" class="unchecked-list"></ul>
+      </div>
+
+      <div id="tab-rules" class="tab-pane hidden">
+        <form id="rule-form" class="rule-form">
+          <input type="text" id="rule-name" placeholder="规则名称" required />
+          <select id="rule-match-type">
+            <option value="fieldname">按字段名(子串,逗号分隔多个)</option>
+            <option value="regex">按正则(匹配值)</option>
+          </select>
+          <input type="text" id="rule-pattern" placeholder="字段名模式 或 正则表达式" required />
+          <div class="loc-checks" id="rule-locations"></div>
+          <button class="btn primary small" type="submit">新增并重新检查</button>
+        </form>
+        <ul id="rule-list" class="rule-list"></ul>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
